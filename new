@@ -1,0 +1,44 @@
+#!/bin/zsh
+# update dir before using it
+dir=/Users/$USER/Documents/Templates
+e=$(ls $dir/*.* | sed 's/.*\././g' | sed 's/^/\"/g' | sed 's/$/\"/g' | tr '\n' ',' | sed 's/,$//g' | sed 's/,/, /g')
+if [ $# -ne 1 ]; then
+	echo "Creating script template based on input's extension."
+	echo "Supported script types are "$e
+	echo -e "\e[31m$(basename $0)\e[0m <\e[35mscript\e[0m.\e[34mextension\e[0m>"
+	exit
+fi
+
+obj=$1
+if [ -f $obj ]; then
+	echo "Skipping existing file: "$obj
+	exit
+fi
+ext=${obj##*.}
+
+function chkcp {
+	for i in $@; do
+		if [ ! -f "$(basename $i)" ]; then
+			cp $i .;
+		fi
+	done
+}
+
+if ls $dir/*.$ext &>/dev/null; then
+	template=$(ls $dir/*.$ext)
+	if [ $obj != $template ]; then
+		if [[ $ext == "c" ]]; then
+			cat $template | sed "s/AUTHOR/$USER/g" > $obj;
+			chkcp $dir/c/*.{c,h};
+			if [ ! -f "Makefile" ]; then
+				printf "${obj%.c}: $obj kstring.c zfio.c\n\tcc -o \$@ \$^ -lz" > Makefile
+			fi
+		else
+			cat $template | sed "s/AUTHOR/$USER/g" > $obj && chmod +x $obj
+		fi
+	else
+		echo "Skipping template: "$template
+	fi
+else
+	echo "Unsupported template: "$1
+fi
