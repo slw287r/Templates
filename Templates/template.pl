@@ -21,7 +21,8 @@ my $in;
 my $dir = cwd;
 my $pfx;
 my $num = 1;
-my $verbose;
+my $VERSION = "0.1.0";
+my $showversion = '';
 
 # parse command line
 use Getopt::Long;
@@ -30,8 +31,13 @@ GetOptions(
 	"d:s" => \$dir,
 	"p=s" => \$pfx,
 	"n:i" => \$num,
-	"v"=>\$verbose,
+	"v"=>\$showversion,
 );
+# show version
+if ($showversion) {
+	print "$VERSION\n";
+	exit;
+}
 
 # check mandatory parameters
 if (!$in || !$dir || !$pfx) {
@@ -39,7 +45,7 @@ if (!$in || !$dir || !$pfx) {
 	exit;
 }
 
-print("Creating output directory...\n") if $verbose;
+#print("Creating output directory...\n") if $verbose;
 $dir= abs_path($dir);
 mkdir($dir);
 
