@@ -23,6 +23,7 @@ my $pfx;
 my $num = 1;
 my $VERSION = "0.1.0";
 my $showversion = '';
+my $verbose = '';
 
 # parse command line
 use Getopt::Long;
@@ -32,6 +33,7 @@ GetOptions(
 	"p=s" => \$pfx,
 	"n:i" => \$num,
 	"v"=>\$showversion,
+	"V"=>\$verbose
 );
 # show version
 if ($showversion) {
@@ -45,7 +47,7 @@ if (!$in || !$dir || !$pfx) {
 	exit;
 }
 
-#print("Creating output directory...\n") if $verbose;
+print("Creating output directory...\n") if $verbose;
 $dir= abs_path($dir);
 mkdir($dir);
 
